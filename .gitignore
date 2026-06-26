@@ -15,6 +15,7 @@ npm-debug.log*
 .env
 .env.local
 *.local
+postgresql.md
 
 # Editors / OS
 .vscode/

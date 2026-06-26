@@ -11,6 +11,8 @@ services:
     envVars:
       - key: OPENROUTER_API_KEY
         sync: false # set this in the Render dashboard (secret)
+      - key: DATABASE_URL
+        sync: false # set this in the Render dashboard (secret) for chat history
       - key: OPENROUTER_MODEL
         value: openai/gpt-4o-mini
       - key: APP_TITLE

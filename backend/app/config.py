@@ -12,6 +12,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    # Database (optional). A Postgres URL, e.g. Neon. If empty, chat history
+    # is not persisted and the app runs without a database.
+    database_url: str = ""
+
     # OpenRouter
     openrouter_api_key: str = ""
     openrouter_base_url: str = "https://openrouter.ai/api/v1"

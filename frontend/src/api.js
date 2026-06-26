@@ -9,13 +9,18 @@ const API_BASE = import.meta.env.VITE_API_URL || "";
  * @param {Array<{role: string, content: string}>} messages
  * @param {(chunk: string) => void} onChunk - called with each text delta
  * @param {AbortSignal} signal
+ * @param {string|null} conversationId - if set, the turn is persisted server-side
  * @returns {Promise<void>}
  */
-export async function streamChat(messages, onChunk, signal) {
+export async function streamChat(messages, onChunk, signal, conversationId = null) {
   const resp = await fetch(`${API_BASE}/api/chat/stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages, stream: true }),
+    body: JSON.stringify({
+      messages,
+      stream: true,
+      conversation_id: conversationId,
+    }),
     signal,
   });
 
@@ -57,5 +62,37 @@ export async function streamChat(messages, onChunk, signal) {
 
 export async function checkHealth() {
   const resp = await fetch(`${API_BASE}/api/health`);
+  return resp.json();
+}
+
+// ---- Conversation history (requires DB enabled on the backend) ----
+
+export async function listConversations() {
+  const resp = await fetch(`${API_BASE}/api/conversations`);
+  if (!resp.ok) throw new Error("Failed to load conversations");
+  return resp.json();
+}
+
+export async function createConversation(title = "New chat") {
+  const resp = await fetch(`${API_BASE}/api/conversations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title }),
+  });
+  if (!resp.ok) throw new Error("Failed to create conversation");
+  return resp.json();
+}
+
+export async function getConversation(id) {
+  const resp = await fetch(`${API_BASE}/api/conversations/${id}`);
+  if (!resp.ok) throw new Error("Failed to load conversation");
+  return resp.json();
+}
+
+export async function deleteConversation(id) {
+  const resp = await fetch(`${API_BASE}/api/conversations/${id}`, {
+    method: "DELETE",
+  });
+  if (!resp.ok) throw new Error("Failed to delete conversation");
   return resp.json();
 }
