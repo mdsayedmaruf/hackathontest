@@ -2,7 +2,8 @@
 // - In local dev, leave VITE_API_URL empty and Vite proxies /api to :8000.
 // - On Vercel, set VITE_API_URL to your Render backend URL, e.g.
 //   https://your-backend.onrender.com
-const API_BASE = import.meta.env.VITE_API_URL || "";
+// Strip any trailing slash so we never produce a double slash (`//api/...`).
+const API_BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
 
 /**
  * Stream a chat completion via SSE.
